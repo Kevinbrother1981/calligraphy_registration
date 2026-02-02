@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第八屆上緯諒茶書法比賽 | 後台管理</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .admin-container {
+            max-width: 1200px;
+            margin: 50px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            display: none;
+            /* Hidden by default */
+        }
+
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #b22222;
+            padding-bottom: 15px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: bold;
+            transition: opacity 0.3s;
+        }
+
+        .btn-export {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .btn-clear {
+            background-color: #dc3545;
+            color: white;
+            margin-left: 10px;
+        }
+
+        .btn-back {
+            background-color: #6c757d;
+            color: white;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 0.9em;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            font-size: 0.9rem;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f7f4ed;
+            color: #b22222;
+            font-weight: bold;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+
+        /* Login Modal */
+        .login-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #f7f4ed;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .login-box {
+            background: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 300px;
+            border-top: 5px solid #b22222;
+        }
+
+        .login-input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 10px;
+            background-color: #b22222;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        .btn-login:hover {
+            opacity: 0.9;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Login Modal -->
+    <div id="loginModal" class="login-overlay">
+        <div class="login-box">
+            <h2 style="margin-bottom: 20px; color: #333;">管理員登入</h2>
+            <input type="text" id="username" class="login-input" placeholder="帳號" autocomplete="off">
+            <input type="password" id="password" class="login-input" placeholder="密碼">
+            <button onclick="checkLogin()" class="btn-login">登入</button>
+            <p id="loginError" style="color: red; margin-top: 10px; font-size: 0.9rem; display: none;">帳號或密碼錯誤</p>
+        </div>
+    </div>
+
+    <div id="adminContent" class="admin-container" style="display: none;">
+        <!-- ... existing content ... -->
+        <div class="admin-header">
+            <div>
+                <h1>報名資料管理</h1>
+                <a href="index.html" class="btn btn-back">返回首頁</a>
+            </div>
+            <div>
+                <button onclick="exportToCSV()" class="btn btn-export">匯出 CSV</button>
+                <button onclick="clearData()" class="btn btn-clear">清除所有資料</button>
+            </div>
+        </div>
+
+        <div style="overflow-x: auto;">
+            <table id="dataTable">
+                <thead>
+                    <tr>
+                        <th>編號</th>
+                        <th>時間</th>
+                        <th>姓名</th>
+                        <th>身分證字號</th>
+                        <th>組別</th>
+                        <th>電話</th>
+                        <th>縣市</th>
+                        <th>服務單位</th>
+                        <th>Email</th>
+                        <th>通訊地址</th>
+                        <th>下載送件表</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                    <!-- Data rows will be inserted here -->
+                </tbody>
+            </table>
+        </div>
+        <div id="emptyState" class="empty-state" style="display: none;">
+            尚無報名資料
+        </div>
+    </div>
+
+    <script src="admin.js"></script>
+</body>
+
+</html>
