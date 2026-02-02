@@ -11,59 +11,73 @@ document.addEventListener('DOMContentLoaded', function () {
     form.addEventListener('submit', function (e) {
         e.preventDefault();
 
-        // Basic Validation (HTML5 handles most, but we can add custom logic here)
+        // Basic Validation
         if (validateForm()) {
-            // Generate Custom ID
-            // Format: 2026SW + 3-digit sequence (e.g. 2026SW001)
-            const currentData = JSON.parse(localStorage.getItem('registrations')) || [];
-            const nextNum = currentData.length + 1;
-            const customId = `2026SW${String(nextNum).padStart(3, '0')}`;
-
-            // Collect Form Data
-            const formData = {
-                id: customId,
-                timestamp: new Date().toLocaleString(),
-                fullName: document.getElementById('fullName').value,
-                idNumber: document.getElementById('idNumber').value,
-                email: document.getElementById('email').value,
-                phone: document.getElementById('phone').value,
-                mobile: document.getElementById('mobile').value,
-                schoolOrg: document.getElementById('schoolOrg').value,
-                postalCode: document.getElementById('postalCode').value,
-                city: document.getElementById('city').value,
-                address: document.getElementById('address').value,
-                group: document.getElementById('competitionGroup').value
-            };
-
-            // Save to LocalStorage
-            saveRegistration(formData);
-
-            // Simulate API call / processing delay
             const submitBtn = document.getElementById('submitBtn');
             const originalText = submitBtn.innerHTML;
 
+            // UI Indication
             submitBtn.innerHTML = '<span class="btn-text">處理中...</span>';
             submitBtn.disabled = true;
             submitBtn.style.opacity = '0.7';
 
-            setTimeout(() => {
-                // Show Success Modal
-                modal.style.display = 'flex';
-                // Update Modal Content with ID
-                const modalIdSpan = modal.querySelector('.highlight-text');
-                if (modalIdSpan) {
-                    modalIdSpan.textContent = customId;
+            // Use Firebase Transaction to generate sequential ID safely
+            const countRef = db.ref('metadata/count');
+
+            countRef.transaction(function (currentCount) {
+                // Increment counter, start at 1 if null
+                return (currentCount || 0) + 1;
+            }, function (error, committed, snapshot) {
+                if (error) {
+                    console.error('Transaction failed abnormally!', error);
+                    alert('報名失敗，請稍後再試');
+                    resetBtn(submitBtn, originalText);
+                } else if (committed) {
+                    const nextNum = snapshot.val();
+                    const customId = `2026SW${String(nextNum).padStart(3, '0')}`;
+
+                    // Collect Form Data
+                    const formData = {
+                        id: customId,
+                        timestamp: new Date().toLocaleString(),
+                        fullName: document.getElementById('fullName').value,
+                        idNumber: document.getElementById('idNumber').value,
+                        email: document.getElementById('email').value,
+                        phone: document.getElementById('phone').value,
+                        mobile: document.getElementById('mobile').value,
+                        schoolOrg: document.getElementById('schoolOrg').value,
+                        postalCode: document.getElementById('postalCode').value,
+                        city: document.getElementById('city').value,
+                        address: document.getElementById('address').value,
+                        group: document.getElementById('competitionGroup').value
+                    };
+
+                    // Save to Firebase
+                    db.ref('registrations/' + customId).set(formData)
+                        .then(() => {
+                            // Show Success Modal
+                            modal.style.display = 'flex';
+                            const modalIdSpan = modal.querySelector('.highlight-text');
+                            if (modalIdSpan) {
+                                modalIdSpan.textContent = customId;
+                            }
+                            resetBtn(submitBtn, originalText);
+                        })
+                        .catch((error) => {
+                            console.error('Write failed', error);
+                            alert('資料儲存失敗: ' + error.message);
+                            resetBtn(submitBtn, originalText);
+                        });
                 }
-
-                // Reset Button
-                submitBtn.innerHTML = originalText;
-                submitBtn.disabled = false;
-                submitBtn.style.opacity = '1';
-
-                // Optional: Reset form handled in closeModal
-            }, 1000);
+            });
         }
     });
+
+    function resetBtn(btn, text) {
+        btn.innerHTML = text;
+        btn.disabled = false;
+        btn.style.opacity = '1';
+    }
 
     // Smooth Scrolling for Anchor Links
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
@@ -104,21 +118,33 @@ window.onclick = function (event) {
     }
 }
 
-// Save data to LocalStorage
-function saveRegistration(data) {
-    let registrations = JSON.parse(localStorage.getItem('registrations')) || [];
-    registrations.push(data);
-    localStorage.setItem('registrations', JSON.stringify(registrations));
-}
+// Print Logic Updated to fetch from Firebase if needed, but for modal we use current data
+// Note: printRegistrationForm needs to know which ID to print. 
+// We will modify it to accept ID or handle it differently.
 
 function printRegistrationForm() {
-    // Get latest registration data
-    const registrations = JSON.parse(localStorage.getItem('registrations')) || [];
-    if (registrations.length === 0) {
-        alert("尚無報名資料");
+    // In the modal context, we want to print the JUST submitted one.
+    // The modal displays the ID. We can grab it from there.
+    const modalIdSpan = document.getElementById('successModal').querySelector('.highlight-text');
+    const idToPrint = modalIdSpan ? modalIdSpan.textContent : null;
+
+    if (!idToPrint) {
+        alert("無法讀取報名編號");
         return;
     }
-    const data = registrations[registrations.length - 1];
+
+    // Fetch specific data from Firebase
+    db.ref('registrations/' + idToPrint).once('value').then((snapshot) => {
+        const data = snapshot.val();
+        if (!data) {
+            alert("找不到資料");
+            return;
+        }
+        generatePrintWindow(data);
+    });
+}
+
+function generatePrintWindow(data) {
 
     // Determine which checkbox to check
     const groups = {

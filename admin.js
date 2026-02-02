@@ -33,44 +33,48 @@ function showAdminContent() {
 }
 
 function loadData() {
-    const data = JSON.parse(localStorage.getItem('registrations')) || [];
     const tbody = document.getElementById('tableBody');
     const emptyState = document.getElementById('emptyState');
     const table = document.getElementById('dataTable');
 
-    if (!tbody || !emptyState || !table) return; // Guard clause
+    if (!tbody || !emptyState || !table) return;
 
-    tbody.innerHTML = '';
+    // Firebase Realtime Listener
+    db.ref('registrations').on('value', (snapshot) => {
+        tbody.innerHTML = ''; // Clear current table
+        const dataObj = snapshot.val();
 
-    if (data.length === 0) {
-        table.style.display = 'none';
-        emptyState.style.display = 'block';
-        return;
-    }
+        if (!dataObj) {
+            table.style.display = 'none';
+            emptyState.style.display = 'block';
+            return;
+        }
 
-    table.style.display = 'table';
-    emptyState.style.display = 'none';
+        table.style.display = 'table';
+        emptyState.style.display = 'none';
 
-    // Sort by newest first
-    data.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+        // Convert object to array and sort
+        const data = Object.values(dataObj);
+        data.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
 
-    data.forEach(item => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-            <td>${item.id || '-'}</td>
-            <td>${item.timestamp}</td>
-            <td>${item.fullName}</td>
-            <td>${item.idNumber}</td>
-            <td>${getGroupName(item.group)}</td>
-            <td>${item.phone}</td>
-            <td>${getCityName(item.city)}</td>
-            <td>${item.schoolOrg}</td>
-            <td>${item.email}</td>
+        data.forEach(item => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${item.id || '-'}</td>
+                <td>${item.timestamp}</td>
+                <td>${item.fullName}</td>
+                <td>${item.idNumber}</td>
+                <td>${getGroupName(item.group)}</td>
+                <td>${item.phone}</td>
+                <td>${getCityName(item.city)}</td>
+                <td>${item.schoolOrg}</td>
+                <td>${item.email}</td>
 
-            <td>${item.postalCode} ${item.address}</td>
-            <td><button onclick="printRegistrationFormAdmin('${item.id}')" class="btn" style="background-color: #17a2b8; color: white; padding: 5px 10px; font-size: 0.8rem;">下載</button></td>
-        `;
-        tbody.appendChild(row);
+                <td>${item.postalCode} ${item.address}</td>
+                <td><button onclick="printRegistrationFormAdmin('${item.id}')" class="btn" style="background-color: #17a2b8; color: white; padding: 5px 10px; font-size: 0.8rem;">下載</button></td>
+            `;
+            tbody.appendChild(row);
+        });
     });
 }
 
@@ -98,64 +102,79 @@ function getCityName(code) {
 }
 
 function exportToCSV() {
-    const data = JSON.parse(localStorage.getItem('registrations')) || [];
-    if (data.length === 0) {
-        alert('無資料可匯出');
-        return;
-    }
+    db.ref('registrations').once('value').then((snapshot) => {
+        const dataObj = snapshot.val();
+        if (!dataObj) {
+            alert('無資料可匯出');
+            return;
+        }
 
-    // CSV Header
-    const headers = ['編號', '時間', '姓名', '身分證字號', '組別', '電話', '縣市', '服務單位', 'Email', '郵遞區號', '地址'];
+        const data = Object.values(dataObj);
 
-    // CSV Content
-    let csvContent = headers.join(',') + '\n';
+        // CSV Header
+        const headers = ['編號', '時間', '姓名', '身分證字號', '組別', '電話', '縣市', '服務單位', 'Email', '郵遞區號', '地址'];
 
-    data.forEach(item => {
-        const row = [
-            `"${item.id || ''}"`,
-            `"${item.timestamp}"`,
-            `"${item.fullName}"`,
-            `"${item.idNumber}"`,
-            `"${getGroupName(item.group)}"`,
-            `"${item.phone}"`,
-            `"${getCityName(item.city)}"`,
-            `"${item.schoolOrg}"`,
-            `"${item.email}"`,
-            `"${item.postalCode}"`,
-            `"${item.address}"`
-        ];
-        csvContent += row.join(',') + '\n';
+        // CSV Content
+        let csvContent = headers.join(',') + '\n';
+
+        data.forEach(item => {
+            const row = [
+                `"${item.id || ''}"`,
+                `"${item.timestamp}"`,
+                `"${item.fullName}"`,
+                `"${item.idNumber}"`,
+                `"${getGroupName(item.group)}"`,
+                `"${item.phone}"`,
+                `"${getCityName(item.city)}"`,
+                `"${item.schoolOrg}"`,
+                `"${item.email}"`,
+                `"${item.postalCode}"`,
+                `"${item.address}"`
+            ];
+            csvContent += row.join(',') + '\n';
+        });
+
+        // Create a Blob with UTF-8 BOM for Excel compatibility
+        const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+
+        const link = document.createElement('a');
+        link.setAttribute('href', url);
+        link.setAttribute('download', `報名資料_${new Date().toISOString().slice(0, 10)}.csv`);
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
     });
-
-    // Create a Blob with UTF-8 BOM for Excel compatibility
-    const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-
-    const link = document.createElement('a');
-    link.setAttribute('href', url);
-    link.setAttribute('download', `報名資料_${new Date().toISOString().slice(0, 10)}.csv`);
-    link.style.visibility = 'hidden';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
 }
 
 function clearData() {
     if (confirm('確定要清除所有報名資料嗎？此動作無法復原。')) {
-        localStorage.removeItem('registrations');
-        loadData();
-        alert('資料已清除');
+        db.ref('registrations').remove()
+            .then(() => {
+                alert('資料已清除');
+                // loadData listener will automatically update the UI
+            })
+            .catch((error) => {
+                alert('清除失敗: ' + error.message);
+            });
     }
 }
 
 function printRegistrationFormAdmin(id) {
-    const dataList = JSON.parse(localStorage.getItem('registrations')) || [];
-    const data = dataList.find(item => item.id === id);
+    db.ref('registrations/' + id).once('value').then((snapshot) => {
+        const data = snapshot.val();
 
-    if (!data) {
-        alert('找不到該筆資料');
-        return;
-    }
+        if (!data) {
+            alert('找不到該筆資料');
+            return;
+        }
+
+        generatePrintWindowAdmin(data);
+    });
+}
+// Renaming old print logic to a helper function, or just inlining it
+function generatePrintWindowAdmin(data) {
 
     const groupChecks = {
         'social': '□',
