@@ -1,15 +1,14 @@
 // Firebase Configuration
-// IMPORTANT: You need to fill in the missing values from your Firebase Console
-// Go to Project Settings -> General -> Your apps -> SDK Setup and Configuration
+// Keys provided by user for project: creat-eac37
 const firebaseConfig = {
-    apiKey: "YOUR_API_KEY_HERE",
-    authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-    // The database URL you provided:
-    databaseURL: "https://calligraphy-registration-35924-default-rtdb.firebaseio.com/",
-    projectId: "YOUR_PROJECT_ID",
-    storageBucket: "YOUR_PROJECT_ID.appspot.com",
-    messagingSenderId: "YOUR_SENDER_ID",
-    appId: "YOUR_APP_ID"
+    apiKey: "AIzaSyArkHnEyRb8JbMnGzzMvw6hloPONcAIe1Q",
+    authDomain: "creat-eac37.firebaseapp.com",
+    projectId: "creat-eac37",
+    storageBucket: "creat-eac37.firebasestorage.app",
+    messagingSenderId: "151348049220",
+    appId: "1:151348049220:web:99803f2bc1953e7e559311",
+    // Inferred Database URL for this project
+    databaseURL: "https://creat-eac37-default-rtdb.firebaseio.com/"
 };
 
 // Initialize Firebase (Compat version)
