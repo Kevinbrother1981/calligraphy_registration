@@ -8,7 +8,7 @@ const firebaseConfig = {
     messagingSenderId: "151348049220",
     appId: "1:151348049220:web:99803f2bc1953e7e559311",
     // Inferred Database URL for this project
-    databaseURL: "https://creat-eac37-default-rtdb.firebaseio.com/"
+    databaseURL: "https://creat-eac37-default-rtdb.asia-southeast1.firebasedatabase.app/",
 };
 
 // Initialize Firebase (Compat version)
