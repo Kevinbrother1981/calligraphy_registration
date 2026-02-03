@@ -660,4 +660,9 @@ footer p {
         margin-top: 30px;
         position: static;
     }
+
+    .info-item {
+        padding-right: 15px;
+        /* Reduce padding on mobile */
+    }
 }
