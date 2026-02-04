@@ -355,6 +355,10 @@ body {
 .info-item .icon {
     font-size: 2rem;
     margin-right: 15px;
+    width: 60px;
+    flex-shrink: 0;
+    display: flex;
+    justify-content: center;
 }
 
 .info-item h4 {
