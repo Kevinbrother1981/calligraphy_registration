@@ -666,6 +666,7 @@ footer p {
         /* Reduce padding on mobile */
     }
 }
+
 /* Custom Title Styling for RWD additions */
 .title-primary {
     white-space: nowrap;
@@ -680,10 +681,10 @@ footer p {
         align-items: center;
         margin-top: 10px;
     }
-    
+
     .edition-badge {
         display: block;
-        width: 100%;
+        width: fit-content;
         text-align: left;
         margin-right: 0;
         margin-bottom: 15px;
@@ -704,7 +705,7 @@ footer p {
         line-height: 1.2;
         margin-top: 5px;
     }
-    
+
     .main-title br {
         display: none;
     }
@@ -712,20 +713,23 @@ footer p {
 
 /* Improved visibility for RWD mode */
 .sub-title {
-    color: #8B4513 !important; /* SaddleBrown to match accent, override previous grey */
+    color: #8B4513 !important;
+    /* SaddleBrown to match accent, override previous grey */
     font-weight: 600 !important;
-    text-shadow: 0 1px 0 rgba(255,255,255,0.8);
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.8);
 }
 
 .organization-info {
-    color: #2F1B12 !important; /* Very dark brown/black for high contrast */
+    color: #2F1B12 !important;
+    /* Very dark brown/black for high contrast */
     font-weight: 700 !important;
-    text-shadow: 0 1px 0 rgba(255,255,255,0.8);
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.8);
 }
 
 /* Ensure readability on smaller screens specifically if needed */
 @media (max-width: 768px) {
     .sub-title {
-        color: #A0522D !important; /* Slightly lighter/brighter Sienna for mobile if needed, or keep same */
+        color: #A0522D !important;
+        /* Slightly lighter/brighter Sienna for mobile if needed, or keep same */
     }
 }
