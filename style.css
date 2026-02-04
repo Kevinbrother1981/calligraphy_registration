@@ -700,6 +700,8 @@ footer p {
         text-align: center;
         width: 100%;
         line-height: 1.2;
+        font-family: 'BiauKai', 'DFKai-SB', 'KaiTi', serif;
+        /* BiauKai font */
     }
 
     .highlight {
@@ -708,6 +710,8 @@ footer p {
         width: 100%;
         line-height: 1.2;
         margin-top: 5px;
+        font-family: 'BiauKai', 'DFKai-SB', 'KaiTi', serif;
+        /* BiauKai font */
     }
 
     .main-title br {
