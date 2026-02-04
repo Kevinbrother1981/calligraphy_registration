@@ -534,6 +534,15 @@ select:focus {
     transform: rotate(45deg);
 }
 
+.checkbox-container a {
+    color: inherit;
+    text-decoration: none;
+    font-weight: bold;
+    /* Optional: keep it bold if it was, or inherit */
+}
+
+
+
 /* Submit Button */
 .form-footer {
     text-align: center;
