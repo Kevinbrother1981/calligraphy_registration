@@ -666,3 +666,46 @@ footer p {
         /* Reduce padding on mobile */
     }
 }
+/* Custom Title Styling for RWD additions */
+.title-primary {
+    white-space: nowrap;
+    display: inline-block;
+}
+
+@media (max-width: 768px) {
+    .main-title {
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-top: 10px;
+    }
+    
+    .edition-badge {
+        display: block;
+        width: 100%;
+        text-align: left;
+        margin-right: 0;
+        margin-bottom: 15px;
+        align-self: flex-start;
+    }
+
+    .title-primary {
+        font-size: 3rem;
+        text-align: center;
+        width: 100%;
+        line-height: 1.2;
+    }
+
+    .highlight {
+        font-size: 3rem;
+        text-align: center;
+        width: 100%;
+        line-height: 1.2;
+        margin-top: 5px;
+    }
+    
+    .main-title br {
+        display: none;
+    }
+}
