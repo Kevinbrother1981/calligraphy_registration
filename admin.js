@@ -65,7 +65,9 @@ function loadData() {
                 <td>${item.fullName}</td>
                 <td>${item.idNumber}</td>
                 <td>${getGroupName(item.group)}</td>
+                <td>${item.companyPhone || ''}</td>
                 <td>${item.phone}</td>
+                <td>${item.mobile || ''}</td>
                 <td>${getCityName(item.city)}</td>
                 <td>${item.schoolOrg}</td>
                 <td>${item.email}</td>
@@ -131,9 +133,9 @@ function exportToCSV() {
                 `"${item.email}"`,
                 `"${item.postalCode}"`,
                 `"${item.address}"`,
-                `"${item.phone}"`,
-                `"${item.phone}"`,
-                `"${item.mobile || ''}"`
+                `"=""${item.companyPhone || ''}"""`,
+                `"=""${item.phone}"""`,
+                `"=""${item.mobile || ''}"""`
             ];
             csvContent += row.join(',') + '\n';
         });
@@ -176,6 +178,7 @@ function openAddModal() {
     document.getElementById('editFullName').value = '';
     document.getElementById('editIdNumber').value = '';
     document.getElementById('editGroup').value = 'social';
+    document.getElementById('editCompanyPhone').value = '';
     document.getElementById('editPhone').value = '';
     document.getElementById('editMobile').value = '';
     document.getElementById('editSchoolOrg').value = '';
@@ -195,6 +198,7 @@ function openEditModal(id) {
         document.getElementById('editFullName').value = data.fullName || '';
         document.getElementById('editIdNumber').value = data.idNumber || '';
         document.getElementById('editGroup').value = data.group || 'social';
+        document.getElementById('editCompanyPhone').value = data.companyPhone || '';
         document.getElementById('editPhone').value = data.phone || '';
         document.getElementById('editMobile').value = data.mobile || '';
         document.getElementById('editSchoolOrg').value = data.schoolOrg || '';
@@ -215,6 +219,7 @@ function saveEdit() {
     const fullName = document.getElementById('editFullName').value.trim();
     const idNumber = document.getElementById('editIdNumber').value.trim();
     const group = document.getElementById('editGroup').value;
+    const companyPhone = document.getElementById('editCompanyPhone').value.trim();
     const phone = document.getElementById('editPhone').value.trim();
     const mobile = document.getElementById('editMobile').value.trim();
     const schoolOrg = document.getElementById('editSchoolOrg').value.trim();
@@ -228,7 +233,7 @@ function saveEdit() {
     if (id) {
         // Edit existing
         const updates = {
-            fullName, idNumber, group, phone, mobile,
+            fullName, idNumber, group, companyPhone, phone, mobile,
             schoolOrg, email, city, postalCode, address
         };
         db.ref('registrations/' + id).update(updates)
@@ -253,7 +258,7 @@ function saveEdit() {
                 const formData = {
                     id: newId,
                     timestamp: new Date().toLocaleString(),
-                    fullName, idNumber, group, phone, mobile,
+                    fullName, idNumber, group, companyPhone, phone, mobile,
                     schoolOrg, email, city, postalCode, address
                 };
                 db.ref('registrations/' + newId).set(formData)
