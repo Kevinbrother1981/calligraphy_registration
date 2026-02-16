@@ -14,7 +14,7 @@ function checkLogin() {
     const username = usernameInput.value;
     const password = passwordInput.value;
 
-    if (username === '2026swancor' && password === 'swancor1!') {
+    if (username === '2026swancor' && password === 'iw123456') {
         // Login success
         errorMsg.style.display = 'none';
         sessionStorage.setItem('adminLoggedIn', 'true');
