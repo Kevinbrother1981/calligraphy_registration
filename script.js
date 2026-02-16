@@ -188,7 +188,7 @@ function generatePrintWindow(data) {
                 @media print {
                     @page {
                         size: A4;
-                        margin: 10mm 12mm;
+                        margin: 0;
                     }
                     body { background: white; }
                     .no-print { display: none !important; }
@@ -438,7 +438,7 @@ function generatePrintWindow(data) {
                     <p style="margin-left:8.5em;">比賽題目當場公布，比賽用紙由大會提供。毛筆、墨汁、硯台、墊布自備。</p>
                     <p style="margin-left:8.5em; text-indent:-1.5em;">4. 頒獎時間：複賽當天上午11時30分辦理頒獎典禮，未親領者則視同放棄。</p>
 
-                    <h3>六、評審及獎勵</h3>
+                    <h3 style="page-break-before: always;">六、評審及獎勵</h3>
                     <p class="indent">（一）評　審：由主辦單位聘請名書法家擔任。</p>
                     <p class="indent">（二）獎勵方式：</p>
                     <table class="awards-table">
