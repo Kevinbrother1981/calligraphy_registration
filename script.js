@@ -55,6 +55,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         fullName: document.getElementById('fullName').value,
                         idNumber: document.getElementById('idNumber').value,
                         email: document.getElementById('email').value,
+                        companyPhone: document.getElementById('companyPhone').value,
                         phone: document.getElementById('phone').value,
                         mobile: document.getElementById('mobile').value,
                         schoolOrg: document.getElementById('schoolOrg').value,
@@ -397,8 +398,9 @@ function generatePrintWindow(data) {
                             <div>${data.address}</div>
                         </td>
                         <td class="phone-cell">
-                            公：${data.phone}<br>
-                            宅：<br>
+                        <td class="phone-cell">
+                            公：${data.companyPhone || ''}<br>
+                            宅：${data.phone || ''}<br>
                             手機：${data.mobile}
                         </td>
                     </tr>
