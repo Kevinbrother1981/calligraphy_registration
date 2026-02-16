@@ -72,6 +72,10 @@ function loadData() {
 
                 <td>${item.postalCode} ${item.address}</td>
                 <td><button onclick="printRegistrationFormAdmin('${item.id}')" class="btn" style="background-color: #17a2b8; color: white; padding: 5px 10px; font-size: 0.8rem;">下載</button></td>
+                <td style="white-space:nowrap;">
+                    <button onclick="openEditModal('${item.id}')" class="btn-edit">修改</button>
+                    <button onclick="deleteRecord('${item.id}')" class="btn-delete">刪除</button>
+                </td>
             `;
             tbody.appendChild(row);
         });
@@ -161,6 +165,110 @@ function clearData() {
             .catch((error) => {
                 alert('清除失敗: ' + error.message);
             });
+    }
+}
+
+// === CRUD Functions ===
+
+function openAddModal() {
+    document.getElementById('editModalTitle').textContent = '新增資料';
+    document.getElementById('editId').value = '';
+    document.getElementById('editFullName').value = '';
+    document.getElementById('editIdNumber').value = '';
+    document.getElementById('editGroup').value = 'social';
+    document.getElementById('editPhone').value = '';
+    document.getElementById('editMobile').value = '';
+    document.getElementById('editSchoolOrg').value = '';
+    document.getElementById('editEmail').value = '';
+    document.getElementById('editCity').value = '';
+    document.getElementById('editPostalCode').value = '';
+    document.getElementById('editAddress').value = '';
+    document.getElementById('editModal').style.display = 'flex';
+}
+
+function openEditModal(id) {
+    db.ref('registrations/' + id).once('value').then((snapshot) => {
+        const data = snapshot.val();
+        if (!data) { alert('找不到資料'); return; }
+        document.getElementById('editModalTitle').textContent = '修改資料';
+        document.getElementById('editId').value = id;
+        document.getElementById('editFullName').value = data.fullName || '';
+        document.getElementById('editIdNumber').value = data.idNumber || '';
+        document.getElementById('editGroup').value = data.group || 'social';
+        document.getElementById('editPhone').value = data.phone || '';
+        document.getElementById('editMobile').value = data.mobile || '';
+        document.getElementById('editSchoolOrg').value = data.schoolOrg || '';
+        document.getElementById('editEmail').value = data.email || '';
+        document.getElementById('editCity').value = data.city || '';
+        document.getElementById('editPostalCode').value = data.postalCode || '';
+        document.getElementById('editAddress').value = data.address || '';
+        document.getElementById('editModal').style.display = 'flex';
+    });
+}
+
+function closeEditModal() {
+    document.getElementById('editModal').style.display = 'none';
+}
+
+function saveEdit() {
+    const id = document.getElementById('editId').value;
+    const fullName = document.getElementById('editFullName').value.trim();
+    const idNumber = document.getElementById('editIdNumber').value.trim();
+    const group = document.getElementById('editGroup').value;
+    const phone = document.getElementById('editPhone').value.trim();
+    const mobile = document.getElementById('editMobile').value.trim();
+    const schoolOrg = document.getElementById('editSchoolOrg').value.trim();
+    const email = document.getElementById('editEmail').value.trim();
+    const city = document.getElementById('editCity').value.trim();
+    const postalCode = document.getElementById('editPostalCode').value.trim();
+    const address = document.getElementById('editAddress').value.trim();
+
+    if (!fullName) { alert('請輸入姓名'); return; }
+
+    if (id) {
+        // Edit existing
+        const updates = {
+            fullName, idNumber, group, phone, mobile,
+            schoolOrg, email, city, postalCode, address
+        };
+        db.ref('registrations/' + id).update(updates)
+            .then(() => { alert('資料已更新'); closeEditModal(); })
+            .catch((err) => { alert('更新失敗: ' + err.message); });
+    } else {
+        // Add new - generate ID
+        const groupCodeMap = {
+            'social': 'A', 'high_school': 'B', 'junior_high': 'C',
+            'elementary_high': 'D', 'elementary_mid': 'E'
+        };
+        const groupCode = groupCodeMap[group] || 'X';
+        const countRef = db.ref('metadata/groupCount/' + group);
+
+        countRef.transaction(function (currentCount) {
+            return (currentCount || 0) + 1;
+        }, function (error, committed, snapshot) {
+            if (error) { alert('新增失敗: ' + error.message); return; }
+            if (committed) {
+                const nextNum = snapshot.val();
+                const newId = `SW115${groupCode}${String(nextNum).padStart(3, '0')}`;
+                const formData = {
+                    id: newId,
+                    timestamp: new Date().toLocaleString(),
+                    fullName, idNumber, group, phone, mobile,
+                    schoolOrg, email, city, postalCode, address
+                };
+                db.ref('registrations/' + newId).set(formData)
+                    .then(() => { alert('新增成功，編號: ' + newId); closeEditModal(); })
+                    .catch((err) => { alert('新增失敗: ' + err.message); });
+            }
+        });
+    }
+}
+
+function deleteRecord(id) {
+    if (confirm('確定要刪除編號 ' + id + ' 的資料嗎？')) {
+        db.ref('registrations/' + id).remove()
+            .then(() => { alert('已刪除 ' + id); })
+            .catch((err) => { alert('刪除失敗: ' + err.message); });
     }
 }
 

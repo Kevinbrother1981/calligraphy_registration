@@ -62,6 +62,128 @@
             opacity: 0.9;
         }
 
+        .btn-add {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            margin-right: 10px;
+        }
+
+        .btn-add:hover {
+            background-color: #218838;
+        }
+
+        .btn-edit {
+            background-color: #ffc107;
+            color: #333;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            margin-right: 4px;
+        }
+
+        .btn-edit:hover {
+            background-color: #e0a800;
+        }
+
+        .btn-delete {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
+        .btn-delete:hover {
+            background-color: #c82333;
+        }
+
+        .edit-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .edit-modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            width: 500px;
+            max-width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .edit-modal-content h2 {
+            margin-top: 0;
+            margin-bottom: 20px;
+        }
+
+        .edit-modal-content label {
+            display: block;
+            margin-top: 10px;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .edit-modal-content input,
+        .edit-modal-content select {
+            width: 100%;
+            padding: 8px;
+            margin-top: 4px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            box-sizing: border-box;
+        }
+
+        .edit-modal-actions {
+            margin-top: 20px;
+            text-align: right;
+        }
+
+        .edit-modal-actions button {
+            padding: 8px 20px;
+            margin-left: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .btn-save {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .btn-save:hover {
+            background-color: #218838;
+        }
+
+        .btn-cancel {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        .btn-cancel:hover {
+            background-color: #5a6268;
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
@@ -166,6 +288,7 @@
                 <a href="index.html" class="btn btn-back">返回首頁</a>
             </div>
             <div>
+                <button onclick="openAddModal()" class="btn btn-add">＋ 新增資料</button>
                 <button onclick="exportToCSV()" class="btn btn-export">匯出 CSV</button>
                 <button onclick="clearData()" class="btn btn-clear">清除所有資料</button>
             </div>
@@ -186,6 +309,7 @@
                         <th>Email</th>
                         <th>通訊地址</th>
                         <th style="white-space:nowrap;">下載送件表</th>
+                        <th>操作</th>
                     </tr>
                 </thead>
                 <tbody id="tableBody">
@@ -195,6 +319,44 @@
         </div>
         <div id="emptyState" class="empty-state" style="display: none;">
             尚無報名資料
+        </div>
+
+        <!-- Edit/Add Modal -->
+        <div id="editModal" class="edit-modal">
+            <div class="edit-modal-content">
+                <h2 id="editModalTitle">編輯資料</h2>
+                <input type="hidden" id="editId">
+                <label>姓名</label>
+                <input type="text" id="editFullName">
+                <label>身分證字號</label>
+                <input type="text" id="editIdNumber">
+                <label>組別</label>
+                <select id="editGroup">
+                    <option value="social">社會組</option>
+                    <option value="high_school">高中組</option>
+                    <option value="junior_high">國中組</option>
+                    <option value="elementary_high">國小高年級組</option>
+                    <option value="elementary_mid">國小中年級組</option>
+                </select>
+                <label>電話</label>
+                <input type="text" id="editPhone">
+                <label>手機</label>
+                <input type="text" id="editMobile">
+                <label>服務單位</label>
+                <input type="text" id="editSchoolOrg">
+                <label>Email</label>
+                <input type="email" id="editEmail">
+                <label>縣市</label>
+                <input type="text" id="editCity">
+                <label>郵遞區號</label>
+                <input type="text" id="editPostalCode">
+                <label>地址</label>
+                <input type="text" id="editAddress">
+                <div class="edit-modal-actions">
+                    <button onclick="closeEditModal()" class="btn-cancel">取消</button>
+                    <button onclick="saveEdit()" class="btn-save">儲存</button>
+                </div>
+            </div>
         </div>
     </div>
 
