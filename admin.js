@@ -116,24 +116,24 @@ function exportToCSV() {
         const data = Object.values(dataObj);
 
         // CSV Header
-        const headers = ['編號', '時間', '姓名', '身分證字號', '組別', '電話', '縣市', '服務單位', 'Email', '郵遞區號', '地址'];
+        const headers = ['組別', '編號', '姓名', '身份證字號', '服務單位或學校', 'Email', '郵遞區號', '地址', '公司電話', '家用電話', '手機'];
 
         // CSV Content
         let csvContent = headers.join(',') + '\n';
 
         data.forEach(item => {
             const row = [
+                `"${getGroupName(item.group)}"`,
                 `"${item.id || ''}"`,
-                `"${item.timestamp}"`,
                 `"${item.fullName}"`,
                 `"${item.idNumber}"`,
-                `"${getGroupName(item.group)}"`,
-                `"${item.phone}"`,
-                `"${getCityName(item.city)}"`,
                 `"${item.schoolOrg}"`,
                 `"${item.email}"`,
                 `"${item.postalCode}"`,
-                `"${item.address}"`
+                `"${item.address}"`,
+                `"${item.phone}"`,
+                `"${item.phone}"`,
+                `"${item.mobile || ''}"`
             ];
             csvContent += row.join(',') + '\n';
         });
