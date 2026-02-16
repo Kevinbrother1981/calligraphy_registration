@@ -152,7 +152,7 @@ function clearData() {
     if (confirm('確定要清除所有報名資料嗎？此動作無法復原。')) {
         Promise.all([
             db.ref('registrations').remove(),
-            db.ref('metadata/groupCount').remove()
+            db.ref('metadata').remove()
         ])
             .then(() => {
                 alert('資料已清除，編號將重新從001開始');
